@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <context:component-scan base-package="service">
+        <context:include-filter type="assignable" expression="service.Instrument"/>
+        <context:include-filter type="assignable" expression="service.Audience"/>
+    </context:component-scan>
+
+    <bean id="kenny" class="service.impl.Instrumentalist" >
+        <property name="song" value="jingle Bells"/>
+    </bean>
+
+    <bean id="kenny2" class="service.impl.Instrumentalist"
+          p:song = "Jingle Bells"/>
+
+    <bean id="hank" class="service.impl.OneManBand">
+        <property name="instruments">
+           <props>
+               <prop key="PIANO">piano song</prop>
+               <prop key="GUITAR">guitar song</prop>
+               <prop key="CYMBAL">crash song</prop>
+           </props>
+        </property>
+    </bean>
+
+    <bean id="audience" class="service.Audience"/>
+
+    <aop:config>
+        <aop:aspect ref="audience">
+            <aop:pointcut id="performance" expression="execution(* service.Performer.perform(..))"/>
+            <aop:before pointcut-ref="performance" method="takeSeats"/>
+            <aop:before pointcut-ref="performance" method="turnOffCellPhone"/>
+            <aop:after-returning pointcut-ref="performance" method="applaud"/>
+            <aop:after-throwing pointcut-ref="performance" method="demandRefund"/>
+        </aop:aspect>
+    </aop:config>
+
+</beans>
